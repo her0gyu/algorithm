@@ -6,15 +6,21 @@ class BtreeNode {
 public:
 	BtreeNode();
 	~BtreeNode();
-	T get_key(int idx);
-	BtreeNode *get_child_node(int idx);
-	bool is_leaf_node(void);
+	T get_key(int idx) const;
+	BtreeNode *get_child_node(int idx) const;
+	//BtreeNode *alloc_child_node();
 
-	int get_nr_node(void);
+
+	int get_nr_node(void) const;
 	void set_nr_node(int nr);
 
 	void set_key(int idx, int key);
+	
+	bool is_full(void) const;
 
+	int insert_child_node(const BtreeNode<T> *node);
+	/* equal to insert_child_node */
+	int operator+(const BtreeNode<T> *node);
 private:
 	/* key of the node */
 	vector<T> key;
@@ -22,5 +28,7 @@ private:
 	int nr_node;
 	/* pointer to children, list */
 	vector<BtreeNode*> child;		
+	/* is leaf node ? */
+	bool is_leaf;
 };
 #endif

@@ -8,7 +8,7 @@ class Btree {
 public:	
 	Btree(int degree);
 	~Btree();
-	int insert_node(BtreeNode<T>* node);
+	int insert_node(int key);
 	int delete_node(BtreeNode<T>* node);
 	/* search method */
 	BtreeNode<T>* search_node(int key);

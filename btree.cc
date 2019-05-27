@@ -13,7 +13,21 @@ Btree<T>::~Btree() {
 
 
 template <typename T>
-int Btree<T>::insert_node(BtreeNode<T>* node) {
+int Btree<T>::insert_node(int key) {
+	BtreeNode *r;
+	BtreeNode *s;
+
+	r = root;
+
+	if(r->is_full(degree)) {
+		s = new BtreeNode<T>();
+		root = s;
+		root->set_nr_node(0);
+		root->set_child_node();
+		root->split_child(1);
+		//root->insert_nonefull(key);
+	} else 
+		//r->insert->nonefull(key);
 	return 0;
 }
 
@@ -55,19 +69,13 @@ template <typename T>
 void Btree<T>::split_child(BtreeNode<T>* node, int idx) {
 	BtreeNode<T>* second = new BtreeNode<T>();
 	BtreeNode<T>* first = node->get_child_node(idx);
-	int i, j, k, t = 0;
-	
-	/* cacluate splited (new allocated)node number */
-	if(degree % 2 == 1)
-		t = degree / 2;
-	else 
-		t = degree / 2 - 1;
+	int i, j, k = 0;
 	
 	/* set the number of node splited node */
 	second->set_nr_node(t);
 
 	/* copy key to second splited node */
-	for(j = 1; j <= t ; j++)
+	for(j = 1; j <= degree ; j++)
 		second->set_key(j, first->get_key(j + t + 1));
 }
 
