@@ -9,7 +9,7 @@ BtreeNode<T>::BtreeNode(void) {
 }
 
 template <typename T>
-int insert_child_node(const BtreeNode<T> *node)
+int BtreeNode<T>::insert_child_node(const BtreeNode<T> *node)
 {
 	child.push_back(node);
 	nr_node++;
@@ -17,7 +17,7 @@ int insert_child_node(const BtreeNode<T> *node)
 }
 
 template <typename T>
-int operator+(const BtreeNode<T> *node)
+int BtreeNode<T>::operator+(const BtreeNode<T> *node)
 {
 	child.push_back(node);
 	nr_node++;
@@ -40,7 +40,7 @@ BtreeNode<T>* BtreeNode<T>::get_child_node(int idx) const {
 /* check the node is leaf ?*/
 template <typename T>
 bool BtreeNode<T>::is_leaf_node(void) const {
-	return this.is_leaf; 
+	return is_leaf; 
 }
 
 template <typename T>
@@ -49,14 +49,45 @@ bool BtreeNode<T>::is_full(int degree) const {
 }
 
 template <typename T>
+void BtreeNode<T>::split_child(int idx, int degree) {
+	BtreeNode<T>* second = new BtreeNode<T>();
+	BtreeNode<T>* first = this.get_child_node(idx);
+	int i, j, k = 0;
+	
+	second->set_leaf(first->get_leaf());
+	/* set the number of node splited node */
+	second->set_nr_node(degree - 1);
+
+	/* copy key to second splited node */
+	for(j = 0; j < degree - 1; j++)
+		second->set_key(j, first->get_key(j + degree + 1));
+	
+	if(first->is_leaf() == false)
+		for(j = 0; j < degree; j++)
+			second->set_child_node(first->get_child_node(j + degree));
+	first->set_nr_node = degree - 1;
+	
+	for (j = this.get_nr_node() + 1; j >= idx + 1; j--)
+		this.set_child_node(this.get_child_node(j + 1));
+	this.set_child_node(second);
+		
+	for (j = this.get_nr_node; j >= idx; j--)
+		this.set_key(j + 1, this.get_key(j));
+
+	this.set_key(idx, first->get_key(degree));
+
+	this.set_nr_node(this.get_nr_node() + 1);
+
+}
+
+template <typename T>
 int BtreeNode<T>::insert_nonefull(int key, int degree)
 {
 	int i;
-
 	i = nr_node;
 
 	if(this.is_leaf_node() == true) {
-		while(i >= 1 && key < get_key(i)) {
+		while(i >= 0 && key < get_key(i)) {
 			this.key[i + 1] = get_key(i);
 			i = i - 1;	
 		}
@@ -64,17 +95,19 @@ int BtreeNode<T>::insert_nonefull(int key, int degree)
 		this.key[i + 1] = key;
 		this.nr_node = this.nr_node + 1;
 	} else {
-		while(i >= 1 && key < get_key(i))
-			i = i - 1;
-			
+		while(i >= 0 && key < get_key(i))
+			i = i - 1;	
+
 		i += 1;
+		/* if full, must be splitted */
 		if(get_chlid_node(i)->is_full(degree))
-			//split(i);
-			if(key > get_child_node_key(i))
+			this.split_child(i, degree);
+			/* if splitted, i'th key changed */
+			if(key > get_key(i))
 				i += 1;
-		//get_child_node(i)->insert_none_full(k);
+		/* Until get to the leaf node */
+		get_child_node(i)->insert_none_full(key);
 	}
-
+	
+	return 0;
 }
-
-

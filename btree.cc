@@ -6,7 +6,6 @@ Btree<T>::Btree(int degree) {
 	this.degree = degree;
 }
 
-
 template <typename T>
 Btree<T>::~Btree() {
 }
@@ -24,10 +23,10 @@ int Btree<T>::insert_node(int key) {
 		root = s;
 		root->set_nr_node(0);
 		root->set_child_node();
-		root->split_child(1);
-		//root->insert_nonefull(key);
+		root->split_child(1, degree);
+		root->insert_nonefull(key, degree);
 	} else 
-		//r->insert->nonefull(key);
+		r->insert_nonefull(key);
 	return 0;
 }
 
@@ -43,7 +42,6 @@ BtreeNode<T>* Btree<T>::search_node(int key)
 {
 	int idx = 0;
 
-	idx = 1;
 	/* if root k`ey is equaled to.. */
 	if(root->key == key)
 		return root;
@@ -62,21 +60,6 @@ BtreeNode<T>* Btree<T>::search_node(int key)
 	/* stage 4: recursive find~ */
 	else
 		(root->get_child_node(idx))->seach_node(key);	
-}
-
-
-template <typename T>
-void Btree<T>::split_child(BtreeNode<T>* node, int idx) {
-	BtreeNode<T>* second = new BtreeNode<T>();
-	BtreeNode<T>* first = node->get_child_node(idx);
-	int i, j, k = 0;
-	
-	/* set the number of node splited node */
-	second->set_nr_node(t);
-
-	/* copy key to second splited node */
-	for(j = 1; j <= degree ; j++)
-		second->set_key(j, first->get_key(j + t + 1));
 }
 
 int main(void)
